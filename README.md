@@ -3,3 +3,5 @@
 
 ## About This Repository
 I will host the code of practice project in this repo. Each lesson has a branch. The project is a simple API blog.
+
+https://abbasudo.notion.site/Laravel-API-Course-b5cf8adbbf5f4bf1a9ecf26d7ae6ed35?pvs=74
