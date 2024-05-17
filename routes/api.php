@@ -20,8 +20,8 @@ Route::get('/posts', function (Request $request) {
 //        ->orWhere('published_at', null)
 //        ->get();
 
-    $startDate = Carbon::createFromDate(2024, 2, 1);
-    $endDate =  Carbon::createFromDate(2025, 6, 1);
+    $startDate = Carbon::createFromDate(2024, 2, 1)->timestamp;
+    $endDate =  Carbon::createFromDate(2025, 6, 1)->timestamp;
 
     $data = DB::table('posts')->whereNotBetween('published_at', [$startDate, $endDate])->get();
 
