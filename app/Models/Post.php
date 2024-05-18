@@ -15,4 +15,9 @@ class Post extends Model
         'description',
         'image_url',
     ];
+
+
+    protected $casts = [
+        'published_at' => 'datetime'
+    ];
 }

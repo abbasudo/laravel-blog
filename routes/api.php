@@ -15,13 +15,11 @@ Route::post('/register', function (Request $request) {
 });
 
 Route::get('/posts', function (Request $request) {
-    dd(Post::find(1));
-
     $startDate = Carbon::createFromDate($request->input('start_date'))->getTimestampMs();
 
     $endDate = Carbon::createFromDate($request->input('end_date'))->getTimestampMs();
 
-    $posts = Post::whereBetween('published_at', [$startDate, $endDate])->get();
+    $posts = Post::whereBetween('published_at', [$startDate, $endDate])->orderByDesc('likes')->get();
 
     return Response::json($posts)->setStatusCode(200);
 });
@@ -35,5 +33,9 @@ Route::post('/posts', function (Request $request) {
         'published_at' => $request->get('published_at'),
     ]);
 
+    return Response::json($post)->setStatusCode(200);
+});
+
+Route::get('/posts/{post}', function (Request $request, Post $post) {
     return Response::json($post)->setStatusCode(200);
 });
