@@ -15,13 +15,10 @@ Route::post('/register', function (Request $request) {
 });
 
 Route::get('/posts', function (Request $request) {
-//    $data = DB::table('posts')
-//        ->where('likes', '!=' ,3)
-//        ->orWhere('published_at', null)
-//        ->get();
 
-    $startDate = Carbon::createFromDate(2020, 2, 1)->getTimestampMs();
-    $endDate =  Carbon::createFromDate(2026, 6, 1)->getTimestampMs();
+    $startDate = Carbon::createFromDate($request->input('start_date'))->getTimestampMs();
+
+    $endDate =  Carbon::createFromDate($request->input('end_date'))->getTimestampMs();
 
     $data = DB::table('posts')->whereBetween('published_at', [$startDate, $endDate])->get();
 
