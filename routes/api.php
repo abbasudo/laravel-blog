@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -16,7 +17,6 @@ Route::post('/register', function (Request $request) {
 
 Route::get('/posts', function (Request $request) {
     $startDate = Carbon::createFromDate($request->input('start_date'))->getTimestampMs();
-
     $endDate = Carbon::createFromDate($request->input('end_date'))->getTimestampMs();
 
     $posts = Post::whereBetween('published_at', [$startDate, $endDate])->orderByDesc('likes')->get();
@@ -38,4 +38,25 @@ Route::post('/posts', function (Request $request) {
 
 Route::get('/posts/{post}', function (Request $request, Post $post) {
     return Response::json($post)->setStatusCode(200);
+});
+
+
+Route::get('/categories', function (Request $request) {
+
+    $categories = Category::all();
+
+    return Response::json($categories)->setStatusCode(200);
+});
+
+
+Route::post('/categories', function (Request $request) {
+    $categories = Category::create([
+        'title'        => $request->get('title'),
+    ]);
+
+    return Response::json($categories)->setStatusCode(201);
+});
+
+Route::get('/categories/{category}', function (Request $request, Category $category) {
+    return Response::json($category)->setStatusCode(200);
 });
