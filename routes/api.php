@@ -68,3 +68,9 @@ Route::patch('/categories/{category}', function (Request $request, Category $cat
 
     return Response::json($category)->setStatusCode(201);
 });
+
+Route::delete('/categories/{category}', function (Request $request, Category $category) {
+    $category->delete();
+
+    return Response::json($category)->setStatusCode(204);
+});
