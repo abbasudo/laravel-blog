@@ -16,7 +16,6 @@ class Post extends Model
         'image_url',
     ];
 
-
     protected $casts = [
         'published_at' => 'datetime'
     ];
