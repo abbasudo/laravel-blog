@@ -20,4 +20,3 @@ Route::post('/posts', [PostController::class, 'store']);
 Route::get('/posts/{post}', [PostController::class, 'show']);
 
 Route::apiResource('/categories', CategoryController::class);
-Route::apiResource('/categories/{category}/posts', CategoryController::class);
