@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('image_url');
-            $table->unsignedInteger('likes')->default(0);
+            $table->foreignIdFor(\App\Models\Category::class)->constrained();            $table->unsignedInteger('likes')->default(0);
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });

@@ -13,10 +13,16 @@ class Post extends Model
         'title',
         'published_at',
         'description',
+        'category_id',
         'image_url',
     ];
 
     protected $casts = [
         'published_at' => 'datetime'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

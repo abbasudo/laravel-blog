@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -17,7 +18,9 @@ class PostController extends Controller
         $startDate = Carbon::createFromDate($request->input('start_date'))->getTimestampMs();
         $endDate   = Carbon::createFromDate($request->input('end_date'))->getTimestampMs();
 
-        $posts = Post::whereBetween('published_at', [$startDate, $endDate])->orderByDesc('likes')->get();
+        $posts = Post::orderByDesc('likes')
+            ->load('category')
+            ->get();
 
         return Response::json([
             'status' => 200,
@@ -33,9 +36,11 @@ class PostController extends Controller
         $attribute = $request->validate([
             'title'        => ['required', 'string', 'unique:posts', 'min:10', 'max:255'],
             'description'  => ['required', 'string', 'min:10', 'max:255'],
+            'category_id'  => ['required', 'int'],
             'image_url'    => ['required', 'string', 'min:10', 'max:255'],
             'published_at' => ['nullable', 'sometimes', 'date'],
         ]);
+
 
         $post = Post::create($attribute);
 
@@ -47,7 +52,13 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return Response::json($post)->setStatusCode(200);
+        $posts = Category::find(1)->posts()
+            ->where('likes', '>', 7)
+            ->orderBy('title')
+            ->first();
+
+
+        return Response::json($posts->load('category'))->setStatusCode(200);
     }
 
     /**
