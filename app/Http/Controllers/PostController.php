@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PostStatusEnum;
 use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
 class PostController extends Controller
@@ -18,8 +20,9 @@ class PostController extends Controller
         $startDate = Carbon::createFromDate($request->input('start_date'))->getTimestampMs();
         $endDate   = Carbon::createFromDate($request->input('end_date'))->getTimestampMs();
 
-        $posts = Post::orderByDesc('likes')
-            ->load('category')
+        $posts = Post::where('status',PostStatusEnum::Draft)
+            ->orderByDesc('likes')
+            ->with('category')
             ->get();
 
         return Response::json([
@@ -42,7 +45,11 @@ class PostController extends Controller
         ]);
 
 
-        $post = Post::create($attribute);
+        $post = Auth::user()->posts()->create($attribute);
+
+//        $attribute['user_id'] = $request->user()->id;
+
+//        $post = Post::create($attribute);
 
         return Response::json($post)->setStatusCode(201);
     }
@@ -52,13 +59,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $posts = Category::find(1)->posts()
-            ->where('likes', '>', 7)
-            ->orderBy('title')
-            ->first();
-
-
-        return Response::json($posts->load('category'))->setStatusCode(200);
+        return Response::json($post->load(['category','user']))->setStatusCode(200);
     }
 
     /**
