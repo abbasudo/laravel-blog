@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\PostStatusEnum;
-use App\Models\Category;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +20,7 @@ class PostController extends Controller
         $startDate = Carbon::createFromDate($request->input('start_date'))->getTimestampMs();
         $endDate   = Carbon::createFromDate($request->input('end_date'))->getTimestampMs();
 
-        $posts = Post::where('status',PostStatusEnum::Draft)
+        $posts = Post::where('status', PostStatusEnum::Draft)
             ->orderByDesc('likes')
             ->with('category')
             ->get();
@@ -39,13 +39,15 @@ class PostController extends Controller
         $attribute = $request->validate([
             'title'        => ['required', 'string', 'unique:posts', 'min:10', 'max:255'],
             'description'  => ['required', 'string', 'min:10', 'max:255'],
-            'category_id'  => ['required', 'int'],
+            'category_id'  => ['required', 'int', 'exists:categories,id'],
             'image_url'    => ['required', 'string', 'min:10', 'max:255'],
             'published_at' => ['nullable', 'sometimes', 'date'],
         ]);
 
 
-        $post = Auth::user()->posts()->create($attribute);
+        $user = User::find(Auth::id());
+
+        $post = $user->posts()->create($attribute);
 
 //        $attribute['user_id'] = $request->user()->id;
 
@@ -59,7 +61,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return Response::json($post->load(['category','user']))->setStatusCode(200);
+        return Response::json($post->load(['category', 'user']))->setStatusCode(200);
     }
 
     /**

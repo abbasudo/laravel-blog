@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +33,7 @@ Route::post('/login', function (Request $request) {
     return Response::json($data)->setStatusCode(201);
 });
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return Auth::user()->load('roles');
 })->middleware('auth:sanctum');
 
 Route::post('/register', function (Request $request) {
@@ -42,13 +43,13 @@ Route::post('/register', function (Request $request) {
         'password' => 'required|string',
     ]);
 
-    $user = User::create($attribute);
+    $user = User::create($attribute)->assignRole('client')->load('roles');
 
     return Response::json($user)->setStatusCode(201);
 });
 
 Route::get('/posts', [PostController::class, 'index']);
-Route::post('/posts', [PostController::class, 'store'])->middleware('auth:sanctum');
+Route::post('/posts', [PostController::class, 'store'])->middleware(['auth:sanctum','role:admin']);
 Route::get('/posts/{post}', [PostController::class, 'show']);
 
 Route::apiResource('/categories', CategoryController::class);
