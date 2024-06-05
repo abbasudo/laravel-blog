@@ -119,17 +119,7 @@ return new class extends Migration
             ->forget(config('permission.cache.key'));
 
 
-        $adminRole = Role::create(['name' => 'admin']);
-        $clientRole = Role::create(['name' => 'client']);
 
-
-        $user = \App\Models\User::create([
-            'name' => 'admin',
-            'password' => '123',
-            'email' => 'admin@admin.com'
-        ]);
-
-        $user->assignRole('admin');
     }
 
     /**
